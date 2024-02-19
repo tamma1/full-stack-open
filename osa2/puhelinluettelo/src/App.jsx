@@ -32,7 +32,7 @@ const PersonForm = ({ onSubmit, newName, newNumber, onNameChange, onNumberChange
   </form>
 )
 
-const Persons = ({ persons, deletePerson }) => 
+const Persons = ({ persons, deletePerson }) => (
   <div>
     {persons.map((person, index) =>
       <div key={index}>
@@ -41,7 +41,30 @@ const Persons = ({ persons, deletePerson }) =>
       </div>
     )}
   </div>
-  
+)
+
+const Notification = ({ message }) => {
+
+  if (message === null) {
+    return null
+  }
+
+  const notificationStyle = {
+      color: message.isError ? 'red' : 'green',
+      background: 'lightgrey',
+      fontSize: '20px',
+      borderStyle: 'solid',
+      borderRadius: '5px',
+      padding: '10px',
+      marginBottom: '10px'
+  }
+
+  return (
+    <div style={notificationStyle}>
+      {message.text}
+    </div>
+  )
+}
 
 const App = () => {
 
@@ -49,6 +72,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
+  const [message, setMessage] = useState({ text: '', isError: false})
 
   useEffect(() => {
     console.log('effect')
@@ -79,6 +103,7 @@ const App = () => {
             setPersons(persons.concat(returnedPerson))
             setNewName('')
             setNewNumber('')
+            setMessage({text: `added ${returnedPerson.name}`, isError: false})
           }) 
     }
   }
@@ -88,9 +113,10 @@ const App = () => {
       personService.remove(person.id)
         .then(() => {
           setPersons(persons.filter(p => p.id !== person.id))
+          setMessage({text: `deleted ${person.name}`, isError: false})
         })
         .catch(error => {
-          alert(`Error deleting ${person.name}`)
+          setMessage({text: `error deleting ${person.name}`, isError: true})
         })
     }
   }
@@ -102,9 +128,10 @@ const App = () => {
           setPersons(persons.map(p => p.id !== person.id ? p : returnedPerson))
           setNewName('')
           setNewNumber('')
+          setMessage({text: `updated ${person.name}`, isError: false})
         })
         .catch(error => {
-          alert(`Error updating the number of ${person.name}`)
+          setMessage({text: `error updating ${person.name}`, isError: true})
         })
     }
 
@@ -134,6 +161,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message}/>
       <Filter value={filter} onChange={handleFilterChange} />
       <h3>Add a new</h3>
       <PersonForm 
