@@ -104,7 +104,12 @@ const App = () => {
             setNewName('')
             setNewNumber('')
             setMessage({text: `added ${returnedPerson.name}`, isError: false})
+          })
+          .catch(error => {
+            console.log(error.response.data.error)
+            setMessage({text: error.response.data.error, isError: true })
           }) 
+    
     }
   }
 
