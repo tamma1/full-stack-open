@@ -60,11 +60,7 @@ const initialBlogs = [
 
 beforeEach(async () => {
   await Blog.deleteMany({})
-
-  for (const blogData of initialBlogs) {
-    const blogObject = new Blog(blogData);
-    await blogObject.save();
-  }
+  await Blog.insertMany(initialBlogs)
 })
 
 test('blogs are returned as json', async () => {
@@ -78,6 +74,14 @@ test('there are six blogs', async () => {
   const response = await api.get('/api/blogs')
 
   assert.strictEqual(response.body.length, initialBlogs.length)
+})
+
+test('blogs have id field instead of -id', async () => {
+  const response = await api.get('/api/blogs')
+
+  for (const blog of response.body) {
+    assert.ok(blog.id)
+  }
 })
 
 after(async () => {
