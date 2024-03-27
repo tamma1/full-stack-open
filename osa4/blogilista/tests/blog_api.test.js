@@ -4,6 +4,7 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
+const blog = require('../models/blog')
 
 const api = supertest(app)
 
@@ -92,6 +93,28 @@ test('a new blog can be added', async () => {
 
   assert.strictEqual(response.body.length, initialBlogs.length + 1)
   assert(titles.includes('New Blog Title'))
+})
+
+test('a blog can be deleted', async () => {
+
+  const blogsInDb = async () => {
+    const blogs = await Blog.find({})
+    return blogs.map(blog => blog.toJSON())
+  }
+
+  const blogsAtStart = await blogsInDb()
+  const blogToDelete = blogsAtStart[0]
+
+  await api
+    .delete(`/api/blogs/${blogToDelete.id}`)
+    .expect(204)
+
+  const blogsAtEnd = await blogsInDb()
+
+  assert.strictEqual(blogsAtEnd.length, blogsAtStart.length - 1)
+
+  const titles = blogsAtEnd.map(r => r.title)
+  assert(!titles.includes(blogToDelete.title))
 })
 
 after(async () => {
