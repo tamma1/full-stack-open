@@ -1,10 +1,10 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImthbGxleiIsImlkIjoiNjYwNTc0OTk2NjdkZGQ3OTYyNzBkZTFjIiwiaWF0IjoxNzExNjM1NDMwfQ.Ss0wpzj7f-3Hcq_yQS9dM8JH7obj_KOOqH_TBpprBNM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImthbGxleGQiLCJpZCI6IjY2MDU4MGFlZTA0MmY5NjYzMzlmMWIyMyIsImlhdCI6MTcxMTYzODM5N30.UaCtP2DL6HqTodlj0y8JAM6dEWv_kSKovuP4z_TXYoo
 
 {
-  "title": "blogi",
-  "author": "kalle",
+  "title": "abcd",
+  "author": "joku",
   "url": "google.com",
   "likes": 10
 }
