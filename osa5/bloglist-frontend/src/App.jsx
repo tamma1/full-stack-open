@@ -71,6 +71,23 @@ const App = () => {
     setUser(null)
   }
 
+  const handleLike = id => {
+    const blog = blogs.find(b => b.id === id)
+    const updatedBlog = { ...blog, likes: blog.likes + 1}
+    console.log(updatedBlog)
+
+    blogService
+      .update(id, updatedBlog)
+        .then(returnedBlog => {
+          setBlogs(blogs.map(b => b.id !== id ? b : returnedBlog))
+          handleSuccess(`blog ${returnedBlog.title} liked successfully`)
+          console.log(returnedBlog)
+        })
+        .catch(error => {
+          handleError('failed to update likes')
+        })
+  }
+
   const handleSuccess = (message) => {
     setSuccessMessage(message)
     setTimeout(() => {
@@ -113,7 +130,11 @@ const App = () => {
         <BlogForm createBlog={addBlog}/>
       </Togglable>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog}/>
+        <Blog 
+          key={blog.id} 
+          blog={blog}
+          handleLike={() => handleLike(blog.id)}
+        />
       )}
     </div>
   )
