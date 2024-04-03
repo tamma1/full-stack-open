@@ -27,10 +27,11 @@ const App = () => {
   }, [])
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )  
-  }, [])
+    blogService.getAll().then(blogs => {
+      const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes);
+      setBlogs(sortedBlogs);
+    });  
+  }, []);
 
   const addBlog = (blogObject) => {
     blogFormRef.current.toggleVisibility()
@@ -79,7 +80,9 @@ const App = () => {
     blogService
       .update(id, updatedBlog)
         .then(returnedBlog => {
-          setBlogs(blogs.map(b => b.id !== id ? b : returnedBlog))
+          setBlogs(blogs
+            .map(b => b.id !== id ? b : returnedBlog)
+            .sort((a, b) => b.likes - a.likes))
           handleSuccess(`blog ${returnedBlog.title} liked successfully`)
           console.log(returnedBlog)
         })
