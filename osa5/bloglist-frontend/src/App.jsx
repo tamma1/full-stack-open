@@ -39,8 +39,8 @@ const App = () => {
       .create(blogObject)
         .then(returnedBlog => {
           setBlogs(blogs.concat(returnedBlog))
-          handleSuccess(`
-            a new blog ${returnedBlog.title} by ${returnedBlog.author} added`
+          handleSuccess(
+            `a new blog ${returnedBlog.title} by ${returnedBlog.author} added`
           )
         })
         .catch(error => {
@@ -91,6 +91,22 @@ const App = () => {
         })
   }
 
+  const handleDelete = (id) => {
+    const blog = blogs.find(b => b.id === id)
+
+    if (window.confirm(`removing blog ${blog.author} by ${blog.author}`)) {
+      blogService
+        .remove(id)
+        .then(() => {
+          setBlogs(blogs.filter(b => b.id !== id))
+          handleSuccess(`blog ${blog.title} deleted successfully`)
+        })
+        .catch(error => {
+          handleError(`Failed to delete blog ${blog.title}`)
+        })
+    }
+  }
+
   const handleSuccess = (message) => {
     setSuccessMessage(message)
     setTimeout(() => {
@@ -137,6 +153,8 @@ const App = () => {
           key={blog.id} 
           blog={blog}
           handleLike={() => handleLike(blog.id)}
+          handleDelete={() => handleDelete(blog.id)}
+          user={user}
         />
       )}
     </div>
