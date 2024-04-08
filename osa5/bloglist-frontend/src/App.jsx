@@ -28,24 +28,24 @@ const App = () => {
 
   useEffect(() => {
     blogService.getAll().then(blogs => {
-      const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes);
-      setBlogs(sortedBlogs);
-    });  
-  }, []);
+      const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes)
+      setBlogs(sortedBlogs)
+    })
+  }, [])
 
   const addBlog = (blogObject) => {
     blogFormRef.current.toggleVisibility()
     blogService
       .create(blogObject)
-        .then(returnedBlog => {
-          setBlogs(blogs.concat(returnedBlog))
-          handleSuccess(
-            `a new blog ${returnedBlog.title} by ${returnedBlog.author} added`
-          )
-        })
-        .catch(error => {
-          handleError('failed to create a new blog')
-        })
+      .then(returnedBlog => {
+        setBlogs(blogs.concat(returnedBlog))
+        handleSuccess(
+          `a new blog ${returnedBlog.title} by ${returnedBlog.author} added`
+        )
+      })
+      .catch(error => {
+        handleError('failed to create a new blog')
+      })
   }
 
   const handleLogin = async (event) => {
@@ -57,7 +57,7 @@ const App = () => {
       })
       window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(user)
-      ) 
+      )
       blogService.setToken(user.token)
       setUser(user)
       setUsername('')
@@ -74,27 +74,25 @@ const App = () => {
 
   const handleLike = id => {
     const blog = blogs.find(b => b.id === id)
-    const updatedBlog = { ...blog, likes: blog.likes + 1}
-    console.log(updatedBlog)
+    const updatedBlog = { ...blog, likes: blog.likes + 1 }
 
     blogService
       .update(id, updatedBlog)
-        .then(returnedBlog => {
-          setBlogs(blogs
-            .map(b => b.id !== id ? b : returnedBlog)
-            .sort((a, b) => b.likes - a.likes))
-          handleSuccess(`blog ${returnedBlog.title} liked successfully`)
-          console.log(returnedBlog)
-        })
-        .catch(error => {
-          handleError('failed to update likes')
-        })
+      .then(returnedBlog => {
+        setBlogs(blogs
+          .map(b => b.id !== id ? b : returnedBlog)
+          .sort((a, b) => b.likes - a.likes))
+        handleSuccess(`blog ${returnedBlog.title} liked successfully`)
+      })
+      .catch(error => {
+        handleError('failed to update likes')
+      })
   }
 
   const handleDelete = (id) => {
     const blog = blogs.find(b => b.id === id)
 
-    if (window.confirm(`removing blog ${blog.author} by ${blog.author}`)) {
+    if (window.confirm(`removing blog ${blog.title} by ${blog.author}`)) {
       blogService
         .remove(id)
         .then(() => {
@@ -143,14 +141,14 @@ const App = () => {
       {successMessage && <div className="success">{successMessage}</div>}
       <p>
         {user.name} logged in{' '}
-        <button onClick={handleLogout}>logout</button> 
+        <button onClick={handleLogout}>logout</button>
       </p>
       <Togglable buttonLabel='new blog' ref={blogFormRef}>
         <BlogForm createBlog={addBlog}/>
       </Togglable>
       {blogs.map(blog =>
-        <Blog 
-          key={blog.id} 
+        <Blog
+          key={blog.id}
           blog={blog}
           handleLike={() => handleLike(blog.id)}
           handleDelete={() => handleDelete(blog.id)}
