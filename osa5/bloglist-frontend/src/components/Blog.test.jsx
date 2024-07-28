@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react'
-import { expect } from 'vitest'
+import { expect, test } from 'vitest'
 import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
 
@@ -26,8 +26,6 @@ test('Title and author are rendered',() => {
 
 test('Url, likes and user are shown after clicking view-button', async () => {
 
-  //const mockHandler = vi.fn()
-
   render(<Blog blog={blog} />)
 
   const eventUser = userEvent.setup()
@@ -42,4 +40,22 @@ test('Url, likes and user are shown after clicking view-button', async () => {
 
   const userElement = screen.getByText("name testi")
   expect(userElement).toBeDefined()
+})
+
+test('Like button calls event handler twice when clicked twice', async () => {
+
+  const mockHandler = vi.fn()
+
+  render(<Blog blog={blog} handleLike={mockHandler} />)
+
+  const eventUser = userEvent.setup()
+
+  const viewButton = screen.getByText('view')
+  await eventUser.click(viewButton)
+
+  const likeButton = screen.getByText('like')
+  await eventUser.click(likeButton)
+  await eventUser.click(likeButton)
+
+  expect(mockHandler.mock.calls).toHaveLength(2)
 })
