@@ -11,6 +11,13 @@ describe('bloglist', () => {
         password: 'salainen'
       }
     })
+    await request.post('http://localhost:3003/api/users', {
+      data: {
+        name: 'Toinen Kayttaja',
+        username: 'toinen',
+        password: 'salasana'
+      }
+    })
 
     await page.goto('http://localhost:5173')
   })
@@ -61,6 +68,15 @@ describe('bloglist', () => {
       page.on('dialog', dialog => dialog.accept());
       await page.getByRole('button', { name: 'delete' }).click()
       await expect(page.getByText('testiTitle testiAuthor')).not.toBeVisible()
+    })
+
+    test('only the user who added blog can see delete button', async ({ page }) => {
+      await page.getByRole('button', { name: 'view' }).click()
+      await expect(page.getByRole('button', { name: 'delete' })).toBeVisible()
+      await page.getByRole('button', { name: 'logout' }).click()
+      await loginWith(page, 'toinen', 'salasana')
+      await page.getByRole('button', { name: 'view' }).click()
+      await expect(page.getByRole('button', { name: 'delete' })).not.toBeVisible()
     })
   })
 })
