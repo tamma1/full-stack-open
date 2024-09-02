@@ -42,19 +42,25 @@ describe('bloglist', () => {
   describe('When logged in', () => {
     beforeEach(async ({ page }) => {
       await loginWith(page, 'mluukkai', 'salainen')
+      await createBlog(page, 'testiTitle', 'testiAuthor', 'testi.fi')
     })
   
     test('a new blog can be created', async ({ page }) => {
-      await createBlog(page, 'testiTitle', 'testiAuthor', 'testi.fi')
       await expect(page.getByText('testiTitle testiAuthor')).toBeVisible()
     })
 
     test('a new blog can be liked', async ({ page }) => {
-      await createBlog(page, 'testiTitle', 'testiAuthor', 'testi.fi')
       await page.getByRole('button', { name: 'view' }).click()
       await expect(page.getByText('0')).toBeVisible()
       await page.getByRole('button', { name: 'like'}).click()
       await expect(page.getByText('1')).toBeVisible()
+    })
+
+    test('user who added blog can delete it', async ({ page }) => {
+      await page.getByRole('button', { name: 'view' }).click()
+      page.on('dialog', dialog => dialog.accept());
+      await page.getByRole('button', { name: 'delete' }).click()
+      await expect(page.getByText('testiTitle testiAuthor')).not.toBeVisible()
     })
   })
 })
