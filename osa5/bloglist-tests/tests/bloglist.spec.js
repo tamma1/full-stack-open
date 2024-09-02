@@ -1,5 +1,5 @@
 const { test, expect, beforeEach, describe } = require('@playwright/test')
-const { loginWith, createBlog } = require('./helper')
+const { loginWith, createBlog, likeBlog } = require('./helper')
 
 describe('bloglist', () => {
   beforeEach(async ({ page, request }) => {
@@ -77,6 +77,31 @@ describe('bloglist', () => {
       await loginWith(page, 'toinen', 'salasana')
       await page.getByRole('button', { name: 'view' }).click()
       await expect(page.getByRole('button', { name: 'delete' })).not.toBeVisible()
+    })
+
+    test('blogs are sorted by number of likes in descending order', async ({ page }) => {
+      await createBlog(page, 'pienin', 'pieni', 'pieni.fi')
+      await createBlog(page, 'isoin', 'iso', 'iso.fi')
+
+      const firstBlogText = await page.getByText('isoin iso')
+      const firstBlogElement = await firstBlogText.locator('..')
+      await likeBlog(page, firstBlogElement, 3)
+
+      const secondBlogText = await page.getByText('testiTitle testiAuthor')
+      const secondBlogElement = await secondBlogText.locator('..')
+      await likeBlog(page, secondBlogElement, 2)
+
+      const thirdBlogText = await page.getByText('pienin pieni')
+      const thirdBlogElement = await thirdBlogText.locator('..')
+      await likeBlog(page, thirdBlogElement, 1)
+
+      const blogs = await page.locator('.blog').all()
+      await expect(blogs[0].getByText('isoin iso')).toBeVisible()
+      await expect(blogs[0].getByText('3')).toBeVisible()
+      await expect(blogs[1].getByText('testiTitle testiAuthor')).toBeVisible()
+      await expect(blogs[1].getByText('2')).toBeVisible()
+      await expect(blogs[2].getByText('pienin pieni')).toBeVisible()
+      await expect(blogs[2].getByText('1')).toBeVisible()
     })
   })
 })
