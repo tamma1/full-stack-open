@@ -15,9 +15,9 @@ test('Form calls the callback function with correct data when a new blog is crea
 
   render(<BlogForm createBlog={createBlog} />)
 
-  const titleInput = screen.getByPlaceholderText('title')
-  const authorInput = screen.getByPlaceholderText('author')
-  const urlInput = screen.getByPlaceholderText('url')
+  const titleInput = screen.getByTestId('title')
+  const authorInput = screen.getByTestId('author')
+  const urlInput = screen.getByTestId('url')
   const submitButton = screen.getByText('create')
 
   await user.type(titleInput, blog.title)
