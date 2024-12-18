@@ -16,6 +16,9 @@ const App = () => {
       const anecdotes = queryClient.getQueryData({ queryKey: ['anecdotes'] })
       queryClient.invalidateQueries({ queryKey: ['anecdotes'] })
       setNotification(dispatch, `anecdote '${newAnecdote.content}' created`)
+    },
+    onError: (error) => {
+      setNotification(dispatch, error.response.data.error)
     }
   })
 
